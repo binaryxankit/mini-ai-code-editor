@@ -38,17 +38,21 @@ const tools = [
             required: [],
         },
         execute: async (input) => {
-            const dirPath = input?.path || '.';
+            const baseDir = process.cwd();
+            const relativePath = input?.path || '.';
+            const targetPath = path.resolve(baseDir, relativePath);
+
+            if (!targetPath.startsWith(baseDir)) {
+                return 'Access denied: invalid path';
+            }
 
             try {
-                const items = fs.readdirSync(dirPath, { withFileTypes: true });
+                const items = fs.readdirSync(targetPath, { withFileTypes: true });
 
-                const results = items.map((item) => ({
+                return items.map((item) => ({
                     name: item.name,
                     type: item.isDirectory() ? 'directory' : 'file',
                 }));
-
-                return results;
             } catch (error) {
                 return `Error listing files: ${error.message}`;
             }
