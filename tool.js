@@ -134,7 +134,7 @@ const tools = [
       const baseDir = process.cwd();
       const targetPath = path.resolve(baseDir, relativePath);
 
-      // 🔒 Sandbox protection
+      // Sandbox protection to prevent the agent from writing to files outside the current directory.
       if (!targetPath.startsWith(baseDir)) {
         return 'Access denied: invalid path';
       }
