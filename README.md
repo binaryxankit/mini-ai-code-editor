@@ -27,7 +27,8 @@ This project is a minimal agent-based AI code editor inspired by the
 
 - `read_file` — Reads a file’s contents (relative path, sandboxed)
 - `list_files` — Lists files and folders at a path (defaults to current directory, sandboxed)
-- `write_file` — Creates/overwrites files (must be explicit about overwrite flag, sandboxed and guarded)
+- `edit_file` — Safely edits files via exact string replacement (delta-based, sandboxed)
+
 
 ## Planned/Next Tools
 
