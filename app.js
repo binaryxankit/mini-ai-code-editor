@@ -72,7 +72,7 @@ async function runEditorLoop() {
           parameters: tool.input_schema,
         },
       })),
-      max_tokens: 1000,
+      max_tokens: 2500,
     });
 
     const message = response.choices[0].message;
