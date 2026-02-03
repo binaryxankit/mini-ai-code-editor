@@ -191,6 +191,103 @@ Do NOT use this to rewrite entire files.
       return `Edited ${relativePath} successfully`;
     },
   },
+
+  // =====================================================
+  // SEARCH CODE (NEW TOOL)
+  // =====================================================
+  {
+    name: 'search_code',
+    description:
+      'Recursively search the codebase for a given string. Returns file paths and line numbers of matches. Use this to find code in the project.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        query: {
+          type: 'string',
+          description: 'The string or code fragment to search for.',
+        },
+        path: {
+          type: 'string',
+          description: 'Relative directory path to search in. Defaults to current directory.',
+        },
+        max_results: {
+          type: 'integer',
+          description: 'Maximum number of results to return (default 100).',
+        },
+      },
+      required: ['query'],
+    },
+    execute: async ({ query, path: searchPath, max_results }) => {
+      const baseDir = process.cwd();
+      const startDir = path.resolve(baseDir, searchPath || '.');
+      const results = [];
+      const maxResults = typeof max_results === 'number' ? max_results : 100;
+      // Restrict attention to common code file extensions to reduce noise
+      const includeExtensions = [
+        '.js', '.ts', '.json', '.jsx', '.tsx', '.md', '.py', '.java', '.c', '.cpp', '.cs', '.rb', '.go'
+      ];
+
+      // 🔒 Sandbox protection
+      if (!startDir.startsWith(baseDir)) {
+        return 'Access denied: invalid search path';
+      }
+
+      function searchInFile(filePath) {
+        try {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const lines = content.split('\n');
+          lines.forEach((line, idx) => {
+            if (line.includes(query)) {
+              results.push({
+                file: path.relative(baseDir, filePath),
+                line: idx + 1,
+                preview: line.trim().slice(0, 200),
+              });
+            }
+          });
+        } catch {
+          // Ignore unreadable files
+        }
+      }
+
+      function walk(dir) {
+        if (results.length >= maxResults) return;
+        let entries;
+        try {
+          entries = fs.readdirSync(dir, { withFileTypes: true });
+        } catch {
+          return;
+        }
+        for (const entry of entries) {
+          if (results.length >= maxResults) return;
+          const fullPath = path.join(dir, entry.name);
+
+          // Skip node_modules and hidden folders/files for safety and speed
+          if (
+            entry.name === 'node_modules' ||
+            entry.name.startsWith('.') ||
+            entry.name === 'dist' ||
+            entry.name === 'build'
+          ) {
+            continue;
+          }
+
+          if (entry.isDirectory()) {
+            walk(fullPath);
+          } else if (entry.isFile()) {
+            const ext = path.extname(entry.name).toLowerCase();
+            if (includeExtensions.includes(ext)) {
+              searchInFile(fullPath);
+            }
+          }
+        }
+      }
+
+      walk(startDir);
+
+      return results.slice(0, maxResults);
+    },
+  },
 ];
 
 export default tools;
