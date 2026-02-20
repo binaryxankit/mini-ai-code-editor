@@ -1,15 +1,21 @@
 {
   "name": "ai-code-editor",
   "version": "1.0.0",
-  "description": "",
+  "description": "Minimal agent-based AI code editor CLI.",
   "main": "app.js",
   "type": "module",
-  "start": "node app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "NODE_ENV=development node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ai",
+    "agent",
+    "code-editor",
+    "cli"
+  ],
+  "author": "binaryxankit",
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
