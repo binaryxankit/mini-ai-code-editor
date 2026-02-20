@@ -48,7 +48,14 @@ async function runAgent() {
       rl.question('\n› ', resolve)
     );
 
-    if (!userInput.trim()) continue;
+    const trimmed = userInput.trim();
+    if (!trimmed) continue;
+
+    if (['exit', 'quit'].includes(trimmed.toLowerCase())) {
+      console.log('\nExiting AI code editor. Goodbye!');
+      rl.close();
+      process.exit(0);
+    }
 
     ConversationContext.push({
       role: 'user',

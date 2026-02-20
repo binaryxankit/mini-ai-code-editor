@@ -28,11 +28,11 @@ This project is a minimal agent-based AI code editor inspired by the
 - `read_file` — Reads a file’s contents (relative path, sandboxed)
 - `list_files` — Lists files and folders at a path (defaults to current directory, sandboxed)
 - `edit_file` — Safely edits files via exact string replacement (delta-based, sandboxed)
+- `search_code` — Recursively searches the codebase for a given string and returns file/line matches
 
 
 ## Planned/Next Tools
 
-- `search_code`
 - Diff-based editing (`apply_diff`)
 - More code-editing and analysis utilities
 
